@@ -125,6 +125,7 @@ export const GetProduct = tryCatch(async (req, res) => {
 export const GetAllProducts = tryCatch(async (req, res) => {
     const products = await Product.find().populate('sellerId','name email');
     res.status(200).json({
+        message: "Products fetched",
         products
     })
 })

@@ -2,10 +2,6 @@
 
 **ShopSphere** is a full-stack e-commerce application built with the **MERN stack**, replicating the core functionalities of Amazon like user authentication, product listings, cart management, and order processing.
 
-<p align="center">
-  <img src="./home.png" alt="ShopSphere Clone" width="500"/>
-</p>
-
 ---
 
 ## 🚀 Features

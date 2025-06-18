@@ -48,10 +48,15 @@ export const addReview = tryCatch(async (req, res) => {
         message,
         rating
     })
+
+    const populatedReview = await Review.findById(review._id)
+        .populate('productId', 'name')
+        .populate('userId', 'name email');
+
     res.status(201).json({
         message: 'Review added successfully',
-        review
-    })
+        review: populatedReview
+    });
 
 })
 
@@ -66,7 +71,7 @@ export const deleteReview = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
     const ReviewOwnerId = (review.userId);
-    
+
     if (userId != ReviewOwnerId) {
         return res.status(403).json({
             message: 'You are not authorized to delete this review'
@@ -77,4 +82,37 @@ export const deleteReview = tryCatch(async (req, res) => {
     res.status(200).json({
         message: 'Review deleted successfully'
     })
+})
+
+export const updateReview = tryCatch(async (req, res) => {
+    const { rating, message } = req.body;
+
+    const reviewId = req.params.id;
+    const review = await Review.findById(reviewId);
+    if (!review) {
+        return res.status(404).json({
+            message: 'Review not found'
+        })
+    }
+    const token = req.cookies.token;
+    const userId = jwt.verify(token, process.env.JWT_SECRET).id;
+    const ReviewOwnerId = (review.userId);
+
+    if (userId != ReviewOwnerId) {
+        return res.status(403).json({
+            message: 'You are not authorized to delete this review'
+        })
+    }
+    if (rating < 1 || rating > 5) {
+        return res.status(400).json({
+            message: 'Rating must be between 1 and 5'
+        })
+    }
+    if (rating) review.rating = rating;
+    if (message) review.message = message;
+    await review.save()
+    res.status(200).json({
+        message: 'Review updated successfully',
+    })
+
 })

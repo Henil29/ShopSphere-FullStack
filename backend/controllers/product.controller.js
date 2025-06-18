@@ -14,7 +14,7 @@ export const AddProduct = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const sellerId = jwt.verify(token, process.env.JWT_SECRET).id;
 
-    const { name, price, details, category, quantity } = req.body;
+    const { name, oldprice, newprice, details, category, quantity } = req.body;
 
     const file = req.file;
     const fileUrl = getDataUrl(file);
@@ -23,13 +23,11 @@ export const AddProduct = tryCatch(async (req, res) => {
             message: "Please upload an image file"
         });
     }
-    if (!name || !price || !details || !category || !quantity) {
+    if (!name || !newprice || !details || !category || !quantity ) {
         return res.status(400).json({
-            message: "All fields are required",
-            name, price, details, description, category, quantity
+            message: "All fields are required"
         });
     }
-
 
     let product = await Product.findOne({ name })
 
@@ -45,7 +43,8 @@ export const AddProduct = tryCatch(async (req, res) => {
     product = await Product.create({
         sellerId,
         name,
-        price,
+        oldprice,
+        newprice,
         details,
         quantity,
         category,
@@ -98,7 +97,8 @@ export const UpdateProduct = tryCatch(async (req, res) => {
         product.image.url = myCloud.secure_url;
     }
     if (name) product.name = name
-    if (price) product.price = price
+    if (newprice) product.newprice = newprice
+    if (oldprice) product.oldprice = oldprice
     if (details) product.details = details
     if (quantity) product.quantity = quantity
     if (category) product.category = category

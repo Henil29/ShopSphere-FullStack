@@ -1,10 +1,6 @@
-# 🛒 Amazon Clone – MERN Stack E-Commerce App
+# 🛒 ShopSphere – MERN Stack E-Commerce App
 
-**Amazon Clone** is a full-stack e-commerce application built with the **MERN stack**, replicating the core functionalities of Amazon like user authentication, product listings, cart management, and order processing.
-
-<p align="center">
-  <img src="./home.png" alt="Amazon Clone" width="500"/>
-</p>
+**ShopSphere** is a full-stack e-commerce application built with the **MERN stack**, replicating the core functionalities of Amazon like user authentication, product listings, cart management, and order processing.
 
 ---
 
@@ -51,8 +47,8 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YourUsername/amazon-clone.git
-cd amazon-clone
+git clone https://github.com/Henil29/ShopSphere.git
+cd ShopSphere
 ```
 
 ---
@@ -102,8 +98,7 @@ npm start
 
 ## 🌐 Live Demo
 
-*https://amazon-clone-xyz.onrender.com/*  
-*(replace with your actual deployed link)*
+*It will publish soon*  
 
 ---
 

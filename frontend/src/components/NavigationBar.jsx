@@ -1,68 +1,100 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { UserData } from '../context/user.contex';
 import { CartData } from '../context/cart.contex';
-import { useNavigate } from 'react-router-dom';
-const NavigationBar = () => {
-  const { isAuth, user, logoutUser } = UserData();
-  const { fetchCart } = CartData();
-  const isLoggedIn = isAuth;
-  const cartCount = fetchCart.length;
-  const navigate = useNavigate();
 
-  // Get current path
+const NavigationBar = () => {
+  const { isAuth, logoutUser } = UserData();
+  const { carts } = CartData(); // ✅ Cart context
+  const isLoggedIn = isAuth;
+
+  const cartCount = carts?.items?.length || 0; // ✅ Dynamic count
+
+  const navigate = useNavigate();
   const location = useLocation();
   const tab = location.pathname;
 
   async function logout() {
     await logoutUser();
   }
+
   return (
     <nav style={styles.navbar}>
       {/* Logo */}
-      <Link to="/" style={{
-        ...styles.logo,
-        textDecoration: tab === '/' ? 'underline' : 'none',
-        fontWeight: tab === '/' ? 'bolder' : styles.logo.fontWeight
-      }}>
+      <Link
+        to="/"
+        style={{
+          ...styles.logo,
+          textDecoration: tab === '/' ? 'underline' : 'none',
+          fontWeight: tab === '/' ? 'bolder' : styles.logo.fontWeight,
+        }}
+      >
         ShopSphere
       </Link>
+
       <div style={styles.spacer} />
+
       {/* Navigation Links */}
       <div style={styles.links}>
         {isLoggedIn ? (
           <>
-            <Link to="/orders" style={{
-              ...styles.link,
-              textDecoration: tab === '/orders' ? 'underline' : 'none',
-              fontWeight: tab === '/orders' ? 'bolder' : styles.link.fontWeight
-            }}>My Orders</Link>
-            <Link to="/profile" style={{
-              ...styles.link,
-              textDecoration: tab === '/profile' ? 'underline' : 'none',
-              fontWeight: tab === '/profile' ? 'bolder' : styles.link.fontWeight
-            }}>Profile</Link>
-            <button style={styles.button} onClick={logout}>Sign Out</button>
+            <Link
+              to="/orders"
+              style={{
+                ...styles.link,
+                textDecoration: tab === '/orders' ? 'underline' : 'none',
+                fontWeight: tab === '/orders' ? 'bolder' : styles.link.fontWeight,
+              }}
+            >
+              My Orders
+            </Link>
+            <Link
+              to="/profile"
+              style={{
+                ...styles.link,
+                textDecoration: tab === '/profile' ? 'underline' : 'none',
+                fontWeight: tab === '/profile' ? 'bolder' : styles.link.fontWeight,
+              }}
+            >
+              Profile
+            </Link>
+            <button style={styles.button} onClick={logout}>
+              Sign Out
+            </button>
           </>
         ) : (
           <>
-            <Link to="/signup" style={{
-              ...styles.link,
-              textDecoration: tab === '/signup' ? 'underline' : 'none',
-              fontWeight: tab === '/signup' ? 'bolder' : styles.link.fontWeight
-            }}>Sign Up</Link>
-            <Link to="/login" style={{
-              ...styles.link,
-              textDecoration: tab === '/login' ? 'underline' : 'none',
-              fontWeight: tab === '/login' ? 'bolder' : styles.link.fontWeight
-            }}>Login</Link>
+            <Link
+              to="/signup"
+              style={{
+                ...styles.link,
+                textDecoration: tab === '/signup' ? 'underline' : 'none',
+                fontWeight: tab === '/signup' ? 'bolder' : styles.link.fontWeight,
+              }}
+            >
+              Sign Up
+            </Link>
+            <Link
+              to="/login"
+              style={{
+                ...styles.link,
+                textDecoration: tab === '/login' ? 'underline' : 'none',
+                fontWeight: tab === '/login' ? 'bolder' : styles.link.fontWeight,
+              }}
+            >
+              Login
+            </Link>
           </>
         )}
-        <Link to="/cart" style={{
-          ...styles.cart,
-          border: tab === '/cart' ? '2px solid #232f3e' : styles.cart.border,
-          fontWeight: tab === '/cart' ? 'bolder' : styles.cart.fontWeight
-        }}>
+
+        <Link
+          to="/cart"
+          style={{
+            ...styles.cart,
+            border: tab === '/cart' ? '2px solid #232f3e' : styles.cart.border,
+            fontWeight: tab === '/cart' ? 'bolder' : styles.cart.fontWeight,
+          }}
+        >
           Cart
           <span style={styles.cartCount}>{cartCount}</span>
         </Link>
@@ -83,7 +115,7 @@ const styles = {
     position: 'sticky',
     top: 0,
     zIndex: 1000,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.07)'
+    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
   },
   logo: {
     fontWeight: 'bold',

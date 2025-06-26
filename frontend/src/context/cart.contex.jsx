@@ -4,26 +4,25 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const CartContext = createContext();
 
 export const CartContextProvider = ({ children }) => {
-  const [products, setCarts] = useState([]);
+  const [carts, setCarts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   async function fetchCart() {
     setLoading(true);
     try {
       const { data } = await axios.get("/api/cart/");
-      setCarts(data);
+      setCarts(data.cart);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch products:", error);
+      console.error("Failed to fetch carts:", error);
       setLoading(false);
     }
   }
   async function addToCart(productId) {
     setLoading(true);
-    try{
+    try {
       const { data } = await axios.post(`/api/cart/${productId}`);
-      console.log("API response data:", data);
-      // setCarts([...products, data]);
+      setCarts(data.cart);
       setLoading(false);
     }
     catch (error) {
@@ -36,7 +35,7 @@ export const CartContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <CartContext.Provider value={{ products, loading, fetchCart,addToCart }}>
+    <CartContext.Provider value={{ carts, loading, fetchCart, addToCart }}>
       {children}
     </CartContext.Provider>
   );

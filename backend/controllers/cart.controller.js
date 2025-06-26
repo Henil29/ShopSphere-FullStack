@@ -78,7 +78,7 @@ export const RemoveProduct = tryCatch(async (req, res) => {
 export const GetCart = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart) {
         return res.status(404).json({ message: "Cart not found" });
     }

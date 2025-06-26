@@ -17,12 +17,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error('Please fill in all fields!');
       return;
     }
     try {
       await loginUser(email, password, navigate, fetchProduct);
-      // No success toast
     } catch (err) {
       toast.error(err);
     }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserData } from '../context/user.contex.jsx';
+import { ProductData } from '../context/product.contex.jsx';
+import { Loading } from '../components/Loading.jsx';
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -9,18 +10,29 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [isSeller, setIsSeller] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { signUp, loading } = UserData();
+  const { fetchProduct } = ProductData();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !email || !password) {
-      toast.error('Please fill in all fields!');
       return;
     }
-    toast.success('Sign up successful!');
+    try {
+      await signUp(name, email, password, isSeller, navigate, fetchProduct);
+    }
+    catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Registration failed");
+    }
   };
 
+  if (loading) {
+    return <Loading />
+  }
   return (
     <div style={styles.container}>
-      <ToastContainer />
       <form style={styles.form} onSubmit={handleSubmit}>
         <h2 style={styles.title}>Sign Up for ShopSphere</h2>
         <label style={styles.label} htmlFor="name">User Name</label>
@@ -68,7 +80,7 @@ const SignUp = () => {
           Already have an account?{' '}
           <Link to="/login" style={styles.registerLink}>Login</Link>
         </div>
-        <div style={{textAlign: 'center', marginTop: '1rem'}}>
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
           <Link to="/" style={{ color: '#007185', textDecoration: 'underline', fontWeight: 500 }}>Back to Home</Link>
         </div>
       </form>

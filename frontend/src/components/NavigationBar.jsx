@@ -1,16 +1,22 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// import { UserData } from '../context/user.contex';
-
+import { UserData } from '../context/user.contex';
+import { CartData } from '../context/cart.contex';
+import { useNavigate } from 'react-router-dom';
 const NavigationBar = () => {
-//   const { isAuth, user } = UserData();
-  const isLoggedIn = false;
-  const cartCount = 2;
+  const { isAuth, user, logoutUser } = UserData();
+  const { fetchCart } = CartData();
+  const isLoggedIn = isAuth;
+  const cartCount = fetchCart.length;
+  const navigate = useNavigate();
 
   // Get current path
   const location = useLocation();
   const tab = location.pathname;
 
+  async function logout() {
+    await logoutUser();
+  }
   return (
     <nav style={styles.navbar}>
       {/* Logo */}
@@ -36,7 +42,7 @@ const NavigationBar = () => {
               textDecoration: tab === '/profile' ? 'underline' : 'none',
               fontWeight: tab === '/profile' ? 'bolder' : styles.link.fontWeight
             }}>Profile</Link>
-            <button style={styles.button}>Sign Out</button>
+            <button style={styles.button} onClick={logout}>Sign Out</button>
           </>
         ) : (
           <>

@@ -2,6 +2,7 @@ import { User } from '../models/user.model.js'
 import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcrypt";
 import tryCatch from '../utils/tryCatch.js';
+import { Cart } from '../models/cart.model.js';
 
 export const register = tryCatch(async (req, res) => {
     const { name, email, password, isSeller } = req.body;
@@ -21,6 +22,8 @@ export const register = tryCatch(async (req, res) => {
         password: hashedPassword,
         isSeller
     })
+    // Create an empty cart for the new user
+    await Cart.create({ userId: user._id, items: [] });
     const token = generateToken(user._id, res);
 
     res.status(201).json({

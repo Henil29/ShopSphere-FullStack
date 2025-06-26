@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
-import toast, { Toaster } from "react-hot-toast";
 
 const UserContext = createContext();
 
@@ -34,8 +33,34 @@ export const UserContextProvider = ({ children }) => {
             setLoading(false);
         } catch (error) {
             setLoading(false);
-            // Throw the error message up to the page
             throw (error.response?.data?.message || "Login failed");
+        }
+    }
+    async function signUp(name, email, password,isSeller, navigate, fetchProduct) {
+        setLoading(true);
+        try {
+            const { data } = await axios.post("/api/auth/register", { name, email, password, isSeller });
+            setUser(data.user);
+            setIsAuth(true);
+            navigate("/");
+            fetchProduct();
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            throw (error.response?.data?.message || "Registration failed");
+        }
+    }
+    async function logoutUser() {
+        setLoading(true);
+        try {
+            const { data } = await axios.post("/api/auth/logout");
+            setUser(null);
+            setIsAuth(false);
+            setLoading(false);
+        }
+        catch (error) {
+            console.error("Failed to logout:", error);
+            setLoading(false);
         }
     }
 
@@ -44,7 +69,7 @@ export const UserContextProvider = ({ children }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, loading, isAuth, fetchUser, loginUser }}>
+        <UserContext.Provider value={{ user, loading, isAuth, fetchUser, loginUser, logoutUser,signUp }}>
             {children}
         </UserContext.Provider>
     );

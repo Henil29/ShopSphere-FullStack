@@ -4,7 +4,7 @@ import { AddtoCart, ChangeQuantity, GetCart, RemoveProduct } from '../controller
 
 const router = express.Router()
 
-router.get("/:id",isAuth,GetCart)
+router.get("/",isAuth,GetCart)
 router.post("/:id",isAuth,AddtoCart)
 router.put("/:id",isAuth,ChangeQuantity)
 router.delete("/:id",isAuth,RemoveProduct)

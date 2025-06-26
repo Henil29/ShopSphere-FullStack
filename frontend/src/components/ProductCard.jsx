@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CartData } from '../context/cart.contex';
 
 const ProductCard = ({ value }) => {
   const navigate = useNavigate();
+  const { addToCart } = CartData();
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    console.log(`Added to cart: ${value.name}`);
+    addToCart(value._id);
   };
 
   const handleCardClick = () => {
@@ -46,65 +48,68 @@ const ProductCard = ({ value }) => {
 
 const styles = {
   card: {
-    width: '180px',
-    padding: '10px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    width: '220px',
+    padding: '12px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
     backgroundColor: '#fff',
-    margin: '10px',
-    fontFamily: 'Arial, sans-serif',
+    margin: '15px',
+    fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    height: 'auto',
-    transition: 'transform 0.2s ease-in-out',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    cursor: 'pointer',
   },
   image: {
     width: '100%',
-    height: '160px',
+    height: '180px',
     objectFit: 'contain',
-    borderRadius: '4px',
-    marginBottom: '8px',
+    borderRadius: '6px',
+    marginBottom: '10px',
   },
   name: {
-    fontSize: '14px',
-    fontWeight: 'bold',
+    fontSize: '15px',
+    fontWeight: 600,
     color: '#0f1111',
-    marginBottom: '6px',
-    minHeight: '36px',
+    marginBottom: '8px',
+    minHeight: '40px',
+    lineHeight: '1.3',
   },
   priceContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '6px',
-    marginBottom: '2px',
+    gap: '8px',
+    marginBottom: '4px',
   },
   oldPrice: {
-    fontSize: '12px',
+    fontSize: '13px',
     color: '#565959',
     textDecoration: 'line-through',
   },
   discount: {
-    fontSize: '12px',
+    fontSize: '13px',
     color: '#007600',
     fontWeight: 'bold',
   },
   newPrice: {
-    fontSize: '14px',
+    fontSize: '16px',
     fontWeight: '700',
     color: '#B12704',
-    marginBottom: '10px',
+    marginBottom: '12px',
   },
   button: {
-    padding: '6px',
+    padding: '8px',
     backgroundColor: '#FFD814',
     border: '1px solid #FCD200',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontWeight: 'bold',
-    fontSize: '12px',
+    fontWeight: '600',
+    fontSize: '13px',
+    transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
   }
 };
+
 
 
 export default ProductCard;

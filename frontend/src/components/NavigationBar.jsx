@@ -1,16 +1,14 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { UserData } from '../context/user.contex';
 import { CartData } from '../context/cart.contex';
 
 const NavigationBar = () => {
   const { isAuth, logoutUser } = UserData();
-  const { carts } = CartData(); // ✅ Cart context
+  const { carts } = CartData();
   const isLoggedIn = isAuth;
 
-  const cartCount = carts?.items?.length || 0; // ✅ Dynamic count
+  const cartCount = carts?.items?.length || 0;
 
-  const navigate = useNavigate();
   const location = useLocation();
   const tab = location.pathname;
 

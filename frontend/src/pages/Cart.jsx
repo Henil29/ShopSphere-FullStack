@@ -2,10 +2,9 @@ import { Loading } from "../components/Loading.jsx";
 import { CartData } from "../context/cart.contex";
 
 const Cart = () => {
-  const { carts, loading } = CartData();
-
+  const { carts, loading, deleteCartItem,updateCartItemQuantity } = CartData();
   if (loading) return <Loading />;
-
+  if (!carts || !carts.items) return <p>No items in the cart</p>;
   return (
     <div style={styles.grid}>
       {carts.items && carts.items.length > 0 ? (
@@ -22,6 +21,12 @@ const Cart = () => {
               <span style={styles.newPrice}>₹{item.productId.newprice}</span>
             </p>
             <p>Quantity: {item.quantity}</p>
+            <button
+              onClick={() =>
+                updateCartItemQuantity(item._id, item.quantity + 1)
+              }>+</button>
+              <button onClick={()=>updateCartItemQuantity(item._id, item.quantity - 1)}>-</button>
+            <button onClick={() => deleteCartItem(item._id)}>Delete</button>
           </div>
         ))
       ) : (

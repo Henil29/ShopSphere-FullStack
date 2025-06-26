@@ -30,12 +30,11 @@ export const AddtoCart = tryCatch(async (req, res) => {
     }
 
     await cart.save();
-    res.json({ message: "Product added to cart" });
-
+    res.json({ cart });
 })
 export const ChangeQuantity = tryCatch(async (req, res) => {
     const { id } = req.params;
-    const { quantity } = req.body || {};
+    let { quantity } = req.body || {};
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
     const cart = await Cart.findOne({ userId });
@@ -51,29 +50,34 @@ export const ChangeQuantity = tryCatch(async (req, res) => {
     if (quantity < 1) {
         quantity = 1
     }
-    productInCart.quantity = quantity;
+    productInCart.quantity = Number(quantity);
     await cart.save();
-    res.json({ message: "Quantity updated" });
+    res.json({ cart });
 })
 export const RemoveProduct = tryCatch(async (req, res) => {
     const { id } = req.params;
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
+  
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-        return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ message: "Cart not found" });
     }
-    const productInCart = await cart.items.find((p) =>
-        p.productId.toString() === id.toString()
+  
+    const itemToRemove = cart.items.find(
+      (p) => p._id.toString() === id.toString()
     );
-
-    if (!productInCart) {
-        return res.status(404).json({ message: "Product not found in cart" });
+  
+    if (!itemToRemove) {
+      return res.status(404).json({ message: "Cart item not found" });
     }
-    cart.items.pull(productInCart);
+  
+    cart.items.pull(itemToRemove._id);
     await cart.save();
-    res.json({ message: "Product removed from cart" });
-})
+  
+    res.json({ cart });
+  });
+  
 
 export const GetCart = tryCatch(async (req, res) => {
     const token = req.cookies.token;

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const CartContext = createContext();
 
 export const CartContextProvider = ({ children }) => {
-  const [carts, setCarts] = useState([]);
+  const [carts, setCarts] = useState(null);
   const [loading, setLoading] = useState(false);
 
   async function fetchCart() {
@@ -23,11 +23,38 @@ export const CartContextProvider = ({ children }) => {
     try {
       const { data } = await axios.post(`/api/cart/${productId}`);
       setCarts(data.cart);
+      await fetchCart();
+      setLoading(false);
+      return { success: true };
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+      setLoading(false);
+      return { success: false };
+    }
+  }
+
+  async function deleteCartItem(cartItemId) {
+    setLoading(true);
+    try {
+      const { data } = await axios.delete(`/api/cart/${cartItemId}`);
+      setCarts(data.cart);
+      await fetchCart();
       setLoading(false);
     }
     catch (error) {
-      console.error("Failed to add product to cart:", error);
+      console.error("Failed to delete cart item:", error);
       setLoading(false);
+    }
+  }
+
+  async function updateCartItemQuantity(cartItemId, quantity) {
+    try{
+      const { data } = await axios.put(`/api/cart/${cartItemId}`, { quantity });
+      setCarts(data.cart);
+      await fetchCart();
+    }
+    catch (error) {
+      console.error("Failed to update cart item quantity:", error);
     }
   }
   useEffect(() => {
@@ -35,7 +62,7 @@ export const CartContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <CartContext.Provider value={{ carts, loading, fetchCart, addToCart }}>
+    <CartContext.Provider value={{ carts, loading, fetchCart, addToCart, deleteCartItem,updateCartItemQuantity }}>
       {children}
     </CartContext.Provider>
   );

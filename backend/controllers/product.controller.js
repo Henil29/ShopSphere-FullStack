@@ -14,7 +14,7 @@ export const AddProduct = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const sellerId = jwt.verify(token, process.env.JWT_SECRET).id;
 
-    const { name, oldprice, newprice, details, category, quantity } = req.body;
+    const { name, oldprice, newprice, details, category, quantity,timeToDeliver } = req.body;
 
     const file = req.file;
     const fileUrl = getDataUrl(file);
@@ -36,6 +36,24 @@ export const AddProduct = tryCatch(async (req, res) => {
             message: "Product already exists"
         });
     }
+
+    if(timeToDeliver){
+        if (typeof timeToDeliver !== 'string') {
+            return res.status(400).json({
+                message: "timeToDeliver must be a string"
+            });
+        }
+        if (timeToDeliver.length < 3) {
+            return res.status(400).json({
+                message: "timeToDeliver must be at least 3 characters long"
+            });
+        }
+        if (timeToDeliver.length > 20) {
+            return res.status(400).json({
+                message: "timeToDeliver must be at most 20 characters long"
+            });
+        }
+    }
     const myClode = await cloudinary.v2.uploader.upload(fileUrl.content, {
         folder: 'amazon/products',
     })
@@ -48,6 +66,7 @@ export const AddProduct = tryCatch(async (req, res) => {
         details,
         quantity,
         category,
+        timeToDeliver: timeToDeliver || "1 week",
         image: {
             id: myClode.public_id,
             url: myClode.secure_url

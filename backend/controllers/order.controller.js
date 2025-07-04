@@ -42,12 +42,24 @@ export const createOrder = tryCatch(async (req, res) => {
         }
         totalAmount += product.newprice * item.quantity;
     }
+
+    // remove product quantity from stock
+
+    for (const item of products) {
+        const product = await Product.findById(item.productId);
+        if (product.stock < item.quantity) {
+            return res.status(400).json({
+                message: `Insufficient stock for product ${product.name}`
+            });
+        }
+        product.stock -= item.quantity;
+        await product.save();
+    }
     const order = await Order.create({
         userId: userId,
         products,
         totalAmount,
         paymentMethod,
-
     });
 
     res.status(201).json({
@@ -55,7 +67,6 @@ export const createOrder = tryCatch(async (req, res) => {
         order
     });
 });
-
 export const getAllOrders = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
@@ -73,7 +84,6 @@ export const getAllOrders = tryCatch(async (req, res) => {
         orders
     });
 });
-
 export const getOrderById = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
@@ -94,7 +104,6 @@ export const getOrderById = tryCatch(async (req, res) => {
         order
     });
 })
-
 export const getCurrentOrder = tryCatch(async (req, res) => {
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
@@ -118,7 +127,6 @@ export const getCurrentOrder = tryCatch(async (req, res) => {
         order
     });
 });
-
 export const updateOrderStatus = tryCatch(async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -142,7 +150,6 @@ export const updateOrderStatus = tryCatch(async (req, res) => {
         order
     });
 });
-
 export const deleteOrder = tryCatch(async (req, res) => {
     const { id } = req.params;
 
@@ -153,7 +160,14 @@ export const deleteOrder = tryCatch(async (req, res) => {
             message: "Order not found"
         });
     }
-
+    // Optionally, you can also restore the stock of products in the order
+    for (const item of order.products) {
+        const product = await Product.findById(item.productId);
+        if (product) {
+            product.stock += item.quantity;
+            await product.save();
+        }
+    }
     res.status(200).json({
         message: "Order deleted successfully"
     });

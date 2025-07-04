@@ -8,6 +8,7 @@ const productSchema = mongoose.Schema({
   details: { type: String },
   quantity: { type: Number, required: true },
   category: { type: [String], required: true },
+  timeToDeliver: { type: String, default: "1 week" },
   image: {
     id: {
       type: String,

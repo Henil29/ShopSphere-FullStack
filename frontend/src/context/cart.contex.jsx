@@ -18,10 +18,11 @@ export const CartContextProvider = ({ children }) => {
       setLoading(false);
     }
   }
-  async function addToCart(productId) {
+  async function addToCart(productId, quantity = 1) {
     setLoading(true);
+
     try {
-      const { data } = await axios.post(`/api/cart/${productId}`);
+      const { data } = await axios.post(`/api/cart/${productId}`, { quantity });
       setCarts(data.cart);
       await fetchCart();
       setLoading(false);
@@ -47,22 +48,39 @@ export const CartContextProvider = ({ children }) => {
     }
   }
 
-  async function updateCartItemQuantity(cartItemId, quantity) {
-    try{
-      const { data } = await axios.put(`/api/cart/${cartItemId}`, { quantity });
-      setCarts(data.cart);
-      await fetchCart();
-    }
-    catch (error) {
-      console.error("Failed to update cart item quantity:", error);
-    }
-  }
+  // async function updateCartItemQuantity(cartItemId, quantity) {
+  //   try{
+  //     console.log("Updating cart item quantity:", cartItemId, quantity);
+  //     const { data } = await axios.put(`/api/cart/`+cartItemId, { quantity });
+  //     setCarts(data.cart);
+  //     await fetchCart();
+  //   }
+  //   catch (error) {
+  //     console.error("Failed to update cart item quantity:", error);
+  //   }
+  // }
   useEffect(() => {
     fetchCart();
   }, []);
+  async function updateCartItemQuantity(cartItemId, quantity) {
+    try {
+      const { data } = await axios.put(`/api/cart/${cartItemId}`, { quantity });
+
+      // Update only the specific item's quantity in state
+      const updatedCart = { ...carts };
+      updatedCart.items = carts.items.map((item) =>
+        item._id === cartItemId
+          ? { ...item, quantity: data.cart.items.find(i => i._id === cartItemId)?.quantity || quantity }
+          : item
+      );
+      setCarts(updatedCart);
+    } catch (error) {
+      console.error("Failed to update cart item quantity:", error);
+    }
+  }
 
   return (
-    <CartContext.Provider value={{ carts, loading, fetchCart, addToCart, deleteCartItem,updateCartItemQuantity }}>
+    <CartContext.Provider value={{ carts, loading, fetchCart, addToCart, deleteCartItem, updateCartItemQuantity }}>
       {children}
     </CartContext.Provider>
   );

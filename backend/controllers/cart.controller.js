@@ -42,8 +42,9 @@ export const ChangeQuantity = tryCatch(async (req, res) => {
         return res.status(404).json({ message: "Cart not found" });
     }
     const productInCart = await cart.items.find((p) =>
-        p.productId.toString() === id.toString()
+        p._id.toString() === id.toString()
     );
+
     if (!productInCart) {
         return res.status(404).json({ message: "Product not found in cart" });
     }
@@ -58,26 +59,26 @@ export const RemoveProduct = tryCatch(async (req, res) => {
     const { id } = req.params;
     const token = req.cookies.token;
     const userId = jwt.verify(token, process.env.JWT_SECRET).id;
-  
+
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+        return res.status(404).json({ message: "Cart not found" });
     }
-  
+
     const itemToRemove = cart.items.find(
-      (p) => p._id.toString() === id.toString()
+        (p) => p._id.toString() === id.toString()
     );
-  
+
     if (!itemToRemove) {
-      return res.status(404).json({ message: "Cart item not found" });
+        return res.status(404).json({ message: "Cart item not found" });
     }
-  
+
     cart.items.pull(itemToRemove._id);
     await cart.save();
-  
+
     res.json({ cart });
-  });
-  
+});
+
 
 export const GetCart = tryCatch(async (req, res) => {
     const token = req.cookies.token;

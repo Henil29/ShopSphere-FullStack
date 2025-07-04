@@ -3,14 +3,29 @@ import { ProductData } from '../context/product.contex.jsx';
 import { Loading } from '../components/Loading.jsx';
 import { FaStar } from 'react-icons/fa';
 import { useParams, useNavigate } from 'react-router-dom';
+import { CartData } from '../context/cart.contex';
+import { toast } from 'react-toastify';
+
+
 import './Product.css';
 
 const Product = () => {
     const { singleProduct, loading, fetchOneProduct } = ProductData();
+    const { addToCart } = CartData();
+
     const { id } = useParams();
     const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
 
+    async function handleAddToCart(productId, quantity) {
+        const result = await addToCart(productId, quantity)
+        if (result.success) {
+            toast.success("Product added to cart successfully!");
+        }
+        else {
+            toast.error("Failed to add product. Please try again.");
+        }
+    }
     useEffect(() => {
         if (id) {
             fetchOneProduct(id);
@@ -20,11 +35,10 @@ const Product = () => {
     if (loading) return <Loading />;
     if (!singleProduct) return <p>Product not found</p>;
 
-    // Placeholder values for missing fieldu
     const rating = 4.4
     const ratingCount = 1950;
-    const brand = 'ASUS'; // Replace with singleProduct.brand if available
-    const model = 'Strix G16'; // Replace with singleProduct.model if available
+    const brand = 'ASUS';
+    const model = 'Strix G16';
     const deliveryDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
     return (
@@ -77,7 +91,10 @@ const Product = () => {
                     </div>
                     {/* Buttons */}
                     <div className="amazon-buttons-section">
-                        <button className="amazon-cart-btn">Add to Cart</button>
+                        <button className="amazon-cart-btn" onClick={() => handleAddToCart(singleProduct._id, quantity)}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f7ca00')}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFD814')}
+                        >Add to Cart</button>
                         <button className="amazon-buy-btn">Buy Now</button>
                     </div>
                     {/* Product Details */}

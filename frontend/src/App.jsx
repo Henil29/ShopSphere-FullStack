@@ -5,6 +5,9 @@ import NavigationBar from './components/NavigationBar.jsx';
 import Login from './pages/Login.jsx';
 import SignUp from './pages/SignUp.jsx';
 import Cart from './pages/Cart.jsx';
+import Profile from './pages/Profile.jsx';
+import UpdateProfile from './pages/UpdateProfile.jsx';
+import Order from './pages/Order.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
@@ -19,6 +22,10 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path='/cart' element={<Cart />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path="/update-profile" element={<UpdateProfile />} />
+          <Route path="/order" element={<Order />} />
+
         </Routes>
         <ToastContainer position="top-right" autoClose={2000} />
       </BrowserRouter>

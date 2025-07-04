@@ -2,12 +2,14 @@ import { Loading } from "../components/Loading.jsx";
 import { CartData } from "../context/cart.contex";
 
 const Cart = () => {
-  const { carts, loading, deleteCartItem,updateCartItemQuantity } = CartData();
+  const { carts, loading, deleteCartItem, updateCartItemQuantity } = CartData();
+
   if (loading) return <Loading />;
   if (!carts || !carts.items) return <p>No items in the cart</p>;
+
   return (
     <div style={styles.grid}>
-      {carts.items && carts.items.length > 0 ? (
+      {carts.items.length > 0 ? (
         carts.items.map((item) => (
           <div key={item._id} style={styles.card}>
             <img
@@ -20,13 +22,40 @@ const Cart = () => {
               <span style={styles.oldPrice}>₹{item.productId.oldprice}</span>{" "}
               <span style={styles.newPrice}>₹{item.productId.newprice}</span>
             </p>
-            <p>Quantity: {item.quantity}</p>
-            <button
-              onClick={() =>
-                updateCartItemQuantity(item._id, item.quantity + 1)
-              }>+</button>
-              <button onClick={()=>updateCartItemQuantity(item._id, item.quantity - 1)}>-</button>
-            <button onClick={() => deleteCartItem(item._id)}>Delete</button>
+
+            {/* Update & Delete - in single line */}
+            <div style={styles.actionsRow}>
+              <div style={styles.quantityBox}>
+                <button
+                  onClick={() => {
+                    if (item.quantity === 1) {
+                      deleteCartItem(item._id);
+                    } else {
+                      updateCartItemQuantity(item._id, item.quantity - 1);
+                    }
+                  }}
+                  style={styles.quantityButton}
+                >
+                  {item.quantity === 1 ? "🗑️" : "−"}
+                </button>
+
+                <div style={styles.quantityText}>{item.quantity}</div>
+
+                <button
+                  onClick={() => updateCartItemQuantity(item._id, item.quantity + 1)}
+                  style={styles.quantityButton}
+                >
+                  +
+                </button>
+              </div>
+
+              <button
+                onClick={() => deleteCartItem(item._id)}
+                style={styles.deleteButton}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))
       ) : (
@@ -64,6 +93,43 @@ const styles = {
   },
   newPrice: {
     color: "#d32f2f",
+    fontWeight: "bold",
+  },
+  actionsRow: {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "1rem",
+  gap: "25px",
+}
+,
+  quantityBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
+  quantityButton: {
+    padding: "6px 12px",
+    fontSize: "18px",
+    border: "1px solid #ccc",
+    borderRadius: "6px",
+    background: "#f5f5f5",
+    cursor: "pointer",
+    minWidth: "40px",
+  },
+  quantityText: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    minWidth: "24px",
+    textAlign: "center",
+  },
+  deleteButton: {
+    background: "#ff4d4f",
+    color: "#fff",
+    border: "none",
+    padding: "8px 16px",
+    borderRadius: "8px",
+    cursor: "pointer",
     fontWeight: "bold",
   },
 };

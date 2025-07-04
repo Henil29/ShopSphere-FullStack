@@ -13,7 +13,7 @@ export const UserContextProvider = ({ children }) => {
         setLoading(true);
         try {
             const { data } = await axios.get("/api/user/me");
-            setUser(data);
+            setUser(data.user);
             setIsAuth(true);
             setLoading(false);
         } catch (error) {
@@ -36,7 +36,7 @@ export const UserContextProvider = ({ children }) => {
             throw (error.response?.data?.message || "Login failed");
         }
     }
-    async function signUp(name, email, password,isSeller, navigate, fetchProduct) {
+    async function signUp(name, email, password, isSeller, navigate, fetchProduct) {
         setLoading(true);
         try {
             const { data } = await axios.post("/api/auth/register", { name, email, password, isSeller });
@@ -63,13 +63,46 @@ export const UserContextProvider = ({ children }) => {
             setLoading(false);
         }
     }
+    async function updateUserInfo(formData) {
+        setLoading(true);
+        try {
+            const { data } = await axios.put("/api/user/update", formData);
+            await fetchUser();
+            setLoading(false);
+            return { success: true, message: data.message };
+        } catch (error) {
+            setLoading(false);
+            return {
+                success: false,
+                message: error.response?.data?.message || "Update failed"
+            };
+        }
+    }
+
+    async function deleteUserAccount() {
+        setLoading(true);
+        try {
+            const { data } = await axios.delete("/api/user/delete");
+            setUser(null);
+            setIsAuth(false);
+            setLoading(false);
+            return { success: true, message: data.message };
+        } catch (error) {
+            setLoading(false);
+            return {
+                success: false,
+                message: error.response?.data?.message || "Delete failed"
+            };
+        }
+    }
+
 
     useEffect(() => {
         fetchUser();
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, loading, isAuth, fetchUser, loginUser, logoutUser,signUp }}>
+        <UserContext.Provider value={{ user, loading, isAuth, fetchUser, loginUser, logoutUser, signUp, updateUserInfo, deleteUserAccount }}>
             {children}
         </UserContext.Provider>
     );

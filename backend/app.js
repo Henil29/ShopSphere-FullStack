@@ -11,6 +11,7 @@ import userRoutes from './routes/user.routes.js'
 import productRoutes from './routes/product.routes.js'
 import cartRoutes from './routes/cart.routes.js'
 import reviewRoutes from './routes/review.routes.js';
+import orderRoutes from './routes/order.routes.js';
 
 dotenv.config()
 const port = process.env.PORT
@@ -51,6 +52,7 @@ app.use("/api/user", userRoutes)
 app.use("/api/product", productRoutes)
 app.use("/api/cart",cartRoutes)
 app.use("/api/review", reviewRoutes)
+app.use("/api/order", orderRoutes)
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)

@@ -1,20 +1,24 @@
 import { Link, useLocation } from 'react-router-dom';
 import { UserData } from '../context/user.contex';
 import { CartData } from '../context/cart.contex';
+import { useState, useEffect } from 'react';
 
 const NavigationBar = () => {
-  const { isAuth, logoutUser } = UserData();
+  const { isAuth, logoutUser, isSeller } = UserData();
   const { carts } = CartData();
+  const [cartItem, setCartItem] = useState(carts?.items?.length || 0);
   const isLoggedIn = isAuth;
-
-  const cartCount = carts?.items?.length || 0;
-
+  const Seller = isAuth && isSeller;
   const location = useLocation();
   const tab = location.pathname;
-
   async function logout() {
+    setCartItem(0);
     await logoutUser();
   }
+
+  useEffect(() => {
+    setCartItem(carts?.items?.length || 0);
+  }, [carts]);
 
   return (
     <nav style={styles.navbar}>
@@ -56,6 +60,16 @@ const NavigationBar = () => {
             >
               Profile
             </Link>
+            {Seller &&
+              <Link
+                to="/my-products"
+                style={{
+                  ...styles.link,
+                  textDecoration: tab === '/my-products' ? 'underline' : 'none',
+                  fontWeight: tab === '/my-products' ? 'bolder' : styles.link.fontWeight
+                }}
+              >My Products</Link>
+            }
             <button style={styles.button} onClick={logout}>
               Sign Out
             </button>
@@ -94,7 +108,7 @@ const NavigationBar = () => {
           }}
         >
           Cart
-          <span style={styles.cartCount}>{cartCount}</span>
+          <span style={styles.cartCount}>{cartItem}</span>
         </Link>
       </div>
     </nav>

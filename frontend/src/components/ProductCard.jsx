@@ -1,6 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { CartData } from '../context/cart.contex';
 import { toast } from 'react-toastify';
+import { FaStar } from 'react-icons/fa';
+
+const CATEGORY_ICONS = {
+  Electronics: '💻',
+  Fashion: '👗',
+  Books: '📚',
+  Home: '🏠',
+  Beauty: '💄',
+  Sports: '🏅',
+  Toys: '🧸',
+  Grocery: '🛒',
+};
 
 const ProductCard = ({ value }) => {
   const navigate = useNavigate();
@@ -17,7 +29,6 @@ const ProductCard = ({ value }) => {
     }
   };
 
-
   const handleCardClick = () => {
     navigate(`/product/${value._id}`);
   };
@@ -29,108 +40,55 @@ const ProductCard = ({ value }) => {
     return Math.round(discount);
   };
 
+  // For demo, use a static rating. Replace with value.rating if available.
+  const rating = value.rating || 4.3;
+  const ratingCount = value.ratingCount || 120;
+
+  // Category tags
+  const categories = Array.isArray(value.category) ? value.category : value.category ? [value.category] : [];
+
   return (
     <div
-      style={styles.card}
+      className="amazon-product-card"
       onClick={handleCardClick}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'scale(1.03)';
-        e.currentTarget.style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'scale(1)';
-        e.currentTarget.style.boxShadow = styles.card.boxShadow;
-      }}
     >
-      <img src={value.image.url} alt={value.name} style={styles.image} />
-
-      <h3 style={styles.name}>{value.name}</h3>
-
-      <div style={styles.priceContainer}>
+      <img src={value.image.url} alt={value.name} className="amazon-product-card-img" />
+      <h3 className="amazon-product-card-title">{value.name}</h3>
+      {categories.length > 0 && (
+        <div className="amazon-product-card-categories">
+          {categories.map(cat => (
+            <span key={cat} className="amazon-product-card-category-chip">
+              <span className="amazon-product-card-category-icon">{CATEGORY_ICONS[cat] || '🏷️'}</span> {cat}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="amazon-product-card-rating">
+        {[...Array(5)].map((_, i) => (
+          <FaStar key={i} color={i < Math.round(rating) ? '#FFD700' : '#ddd'} size={16} />
+        ))}
+        <span className="amazon-product-card-rating-value">{rating.toFixed(1)}</span>
+        <span className="amazon-product-card-rating-count">({ratingCount})</span>
+      </div>
+      <div className="amazon-product-card-price-row">
         {value.oldprice && (
-          <>
-            <span style={styles.oldPrice}>₹{value.oldprice}</span>
-            <span style={styles.discount}>{getDiscount()}% off</span>
-          </>
+          <span className="amazon-old-price">₹{value.oldprice}</span>
+        )}
+        {getDiscount() && (
+          <span className="amazon-discount">{getDiscount()}% off</span>
         )}
       </div>
-
-      <span style={styles.newPrice}>₹{value.newprice}</span>
-
+      <span className="amazon-new-price">₹{value.newprice}</span>
       <button
-        style={styles.button}
+        className="amazon-product-card-btn"
         onClick={handleAddToCart}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f7ca00')}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFD814')}
+        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f7ca00')}
+        onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#FFD814')}
       >
         Add to Cart
       </button>
     </div>
   );
-};
-
-const styles = {
-  card: {
-    width: '100%',
-    maxWidth: '240px',
-    padding: '16px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-    backgroundColor: '#fff',
-    fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-    cursor: 'pointer',
-  },
-  image: {
-    width: '100%',
-    height: '180px',
-    objectFit: 'contain',
-    borderRadius: '6px',
-    marginBottom: '12px',
-  },
-  name: {
-    fontSize: '15px',
-    fontWeight: 600,
-    color: '#0f1111',
-    marginBottom: '10px',
-    minHeight: '40px',
-    lineHeight: '1.4',
-  },
-  priceContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '4px',
-  },
-  oldPrice: {
-    fontSize: '13px',
-    color: '#565959',
-    textDecoration: 'line-through',
-  },
-  discount: {
-    fontSize: '13px',
-    color: '#007600',
-    fontWeight: 'bold',
-  },
-  newPrice: {
-    fontSize: '17px',
-    fontWeight: '700',
-    color: '#B12704',
-    marginBottom: '14px',
-  },
-  button: {
-    padding: '10px',
-    backgroundColor: '#FFD814',
-    border: '1px solid #FCD200',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontWeight: '600',
-    fontSize: '14px',
-    transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
-  }
 };
 
 export default ProductCard;

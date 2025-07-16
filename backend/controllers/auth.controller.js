@@ -29,6 +29,7 @@ export const register = tryCatch(async (req, res) => {
     res.status(201).json({
         message: "User registered successfully",
         user,
+        isSeller
     })
 
 })
@@ -50,7 +51,8 @@ export const login = tryCatch(async (req, res) => {
     const token = generateToken(user._id, res)
     res.status(200).json({
         message: "User logged in successfully",
-        token
+        token,user,
+        isSeller: user.isSeller
     })
 })
 

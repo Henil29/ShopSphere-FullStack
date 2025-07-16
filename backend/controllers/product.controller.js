@@ -82,10 +82,17 @@ export const AddProduct = tryCatch(async (req, res) => {
 
 export const DeleteProduct = tryCatch(async (req, res) => {
     const { id } = req.params;
+    const token = req.cookies.token;
+    const sellerId = jwt.verify(token, process.env.JWT_SECRET).id;
     const product = await Product.findById(id);
     if (!product) {
         return res.status(404).json({
             message: "Product not found"
+        });
+    }
+    if (product.sellerId.toString() !== sellerId) {
+        return res.status(403).json({
+            message: "You are not authorized to delete this product"
         });
     }
     await cloudinary.v2.uploader.destroy(product.image.id);
@@ -97,7 +104,7 @@ export const DeleteProduct = tryCatch(async (req, res) => {
 
 export const UpdateProduct = tryCatch(async (req, res) => {
     const { id } = req.params;
-    const { name, price, details, quantity, category } = req.body;
+    const { name, newprice, oldprice, details, quantity, category, timeToDeliver } = req.body;
     const product = await Product.findById(id);
     if (!product) {
         return res.status(404).json({
@@ -115,18 +122,18 @@ export const UpdateProduct = tryCatch(async (req, res) => {
         product.image.id = myCloud.public_id;
         product.image.url = myCloud.secure_url;
     }
-    if (name) product.name = name
-    if (newprice) product.newprice = newprice
-    if (oldprice) product.oldprice = oldprice
-    if (details) product.details = details
-    if (quantity) product.quantity = quantity
-    if (category) product.category = category
+    if (name) product.name = name;
+    if (newprice) product.newprice = newprice;
+    if (oldprice) product.oldprice = oldprice;
+    if (details) product.details = details;
+    if (quantity) product.quantity = quantity;
+    if (category) product.category = category;
+    if (timeToDeliver) product.timeToDeliver = timeToDeliver;
     await product.save();
     res.status(200).json({
         message: "Product updated successfully",
         product
     })
-
 })
 
 export const GetProduct = tryCatch(async (req, res) => {

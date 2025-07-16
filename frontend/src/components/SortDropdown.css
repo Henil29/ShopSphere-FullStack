@@ -1,0 +1,28 @@
+.amazon-sort-dropdown-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 18px auto;
+  max-width: 480px;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+.amazon-sort-dropdown-label {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #232f3e;
+}
+.amazon-sort-dropdown {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1.5px solid #e0e0e0;
+  font-size: 1.05rem;
+  background: #f8f9fa;
+  color: #232f3e;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  transition: border 0.2s;
+  outline: none;
+}
+.amazon-sort-dropdown:focus {
+  border: 1.5px solid #ffd814;
+  background: #fff;
+} 

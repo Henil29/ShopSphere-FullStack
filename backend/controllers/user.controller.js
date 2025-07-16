@@ -13,7 +13,8 @@ export const Userinfo = tryCatch(async (req, res) => {
     }
     res.json({
         message: "User found",
-        user
+        user,
+        isSeller: user.isSeller
     });
 })
 export const Updateinfo = tryCatch(async (req, res) => {

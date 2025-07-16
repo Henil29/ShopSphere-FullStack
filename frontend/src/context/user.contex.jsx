@@ -7,29 +7,30 @@ export const UserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isAuth, setIsAuth] = useState(false)
-
-
+    const [isSeller, setIsSeller] = useState(false);
     async function fetchUser() {
         setLoading(true);
         try {
             const { data } = await axios.get("/api/user/me");
             setUser(data.user);
             setIsAuth(true);
+            setIsSeller(data.isSeller ?? data.user?.isSeller ?? false);
             setLoading(false);
         } catch (error) {
             console.error("Failed to fetch user profile:", error);
             setLoading(false);
         }
     }
-
-    async function loginUser(email, password, navigate, fetchProduct) {
+    async function loginUser(email, password, navigate, fetchProduct, fetchCart) {
         setLoading(true);
         try {
             const { data } = await axios.post("/api/auth/login", { email, password });
             setUser(data.user);
             setIsAuth(true);
+            setIsSeller(data.isSeller);
             navigate("/");
             fetchProduct();
+            fetchCart();
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -42,6 +43,7 @@ export const UserContextProvider = ({ children }) => {
             const { data } = await axios.post("/api/auth/register", { name, email, password, isSeller });
             setUser(data.user);
             setIsAuth(true);
+            setIsSeller(isSeller);
             navigate("/");
             fetchProduct();
             setLoading(false);
@@ -56,6 +58,7 @@ export const UserContextProvider = ({ children }) => {
             const { data } = await axios.post("/api/auth/logout");
             setUser(null);
             setIsAuth(false);
+            setIsSeller(false);
             setLoading(false);
         }
         catch (error) {
@@ -78,7 +81,6 @@ export const UserContextProvider = ({ children }) => {
             };
         }
     }
-
     async function deleteUserAccount() {
         setLoading(true);
         try {
@@ -95,14 +97,12 @@ export const UserContextProvider = ({ children }) => {
             };
         }
     }
-
-
     useEffect(() => {
         fetchUser();
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, loading, isAuth, fetchUser, loginUser, logoutUser, signUp, updateUserInfo, deleteUserAccount }}>
+        <UserContext.Provider value={{ user, loading, isSeller, isAuth, fetchUser, loginUser, logoutUser, signUp, updateUserInfo, deleteUserAccount }}>
             {children}
         </UserContext.Provider>
     );

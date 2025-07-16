@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { UserData } from '../context/user.contex.jsx';
 import { ProductData } from '../context/product.contex.jsx';
 import { Loading } from '../components/Loading.jsx';
+import { CartData } from '../context/cart.contex.jsx';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const Login = () => {
 
   const { loginUser, loading } = UserData()
   const { fetchProduct } = ProductData();
+  const { fetchCart } = CartData();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ const Login = () => {
       return;
     }
     try {
-      await loginUser(email, password, navigate, fetchProduct);
+      await loginUser(email, password, navigate, fetchProduct, fetchCart);
     } catch (err) {
       toast.error(err);
     }

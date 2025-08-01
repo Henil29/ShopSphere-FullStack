@@ -20,13 +20,13 @@ export const createOrder = tryCatch(async (req, res) => {
         });
     }
     // take address from user model. but take addressNum number's of address
-    if (!addressNum) {
+    if (addressNum === undefined || addressNum === null) {
         return res.status(400).json({
             message: "Address number is required"
         });
     }
-
-    const shippingAddress = await User.findById(userId).select('address')[addressNum];
+    const user = await User.findById(userId).select('address');
+    const shippingAddress = user && user.address ? user.address[addressNum] : null;
     if (!shippingAddress) {
         return res.status(404).json({
             message: "Address not found"
@@ -60,6 +60,7 @@ export const createOrder = tryCatch(async (req, res) => {
         products,
         totalAmount,
         paymentMethod,
+        shippingAddress,
     });
 
     res.status(201).json({

@@ -47,20 +47,20 @@ const SellerProducts = () => {
             <div key={product._id} className="amazon-product-list-card">
               <img src={product.image?.url} alt={product.name} className="amazon-product-list-img" />
               <div className="amazon-product-list-info">
-                <h3>{product.name}</h3>
-                <p><b>Price:</b> ₹{product.newprice}</p>
-                <p><b>Quantity:</b> {product.quantity}</p>
-                <p><b>Category:</b> {Array.isArray(product.category) ? product.category.join(', ') : product.category}</p>
-                <p><b>Details:</b> {product.details}</p>
+                <h3 className="seller-product-title">{product.name}</h3>
+                <p><span className="seller-product-label">Price:</span> <span className="seller-product-value">₹{product.newprice}</span></p>
+                <p><span className="seller-product-label">Quantity:</span> <span className="seller-product-value">{product.quantity}</span></p>
+                <p><span className="seller-product-label">Category:</span> {Array.isArray(product.category) ? product.category.map((cat, i) => <span key={i} className="seller-category-tag">{cat}</span>) : <span className="seller-category-tag">{product.category}</span>}</p>
+                <p><span className="seller-product-label">Details:</span> <span className="seller-product-value">{product.details}</span></p>
                 <div className="amazon-product-list-actions">
                   <Link
                     to={`/update-product/${product._id}`}
-                    className="amazon-product-list-btn amazon-product-list-btn-update"
+                    className="seller-btn seller-btn-update"
                   >
                     Update
                   </Link>
                   <button
-                    className="amazon-product-list-btn amazon-product-list-btn-delete"
+                    className="seller-btn seller-btn-delete"
                     onClick={() => handleDelete(product._id)}
                     disabled={deletingId === product._id}
                   >

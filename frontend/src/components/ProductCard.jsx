@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartData } from '../context/cart.contex';
 import { toast } from 'react-toastify';
 import { FaStar } from 'react-icons/fa';
+import { UserData } from '../context/user.contex';
 
 const CATEGORY_ICONS = {
   Electronics: '💻',
@@ -17,9 +18,14 @@ const CATEGORY_ICONS = {
 const ProductCard = ({ value }) => {
   const navigate = useNavigate();
   const { addToCart } = CartData();
+  const { isAuth } = UserData();
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
+    if (!isAuth) {
+      toast.error('Please login or sign up to add product in cart');
+      return;
+    }
     const result = await addToCart(value._id);
 
     if (result.success) {

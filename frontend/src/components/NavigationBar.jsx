@@ -41,11 +41,11 @@ const NavigationBar = () => {
         {isLoggedIn ? (
           <>
             <Link
-              to="/orders"
+              to="/order"
               style={{
                 ...styles.link,
-                textDecoration: tab === '/orders' ? 'underline' : 'none',
-                fontWeight: tab === '/orders' ? 'bolder' : styles.link.fontWeight,
+                textDecoration: tab === '/order' ? 'underline' : 'none',
+                fontWeight: tab === '/order' ? 'bolder' : styles.link.fontWeight,
               }}
             >
               My Orders

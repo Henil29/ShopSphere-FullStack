@@ -28,19 +28,17 @@ cloudinary.v2.config({
 // for mongo db
 
 const connectDB = async () => {
+
     try {
-      await mongoose.connect(mongo_url, {
-        dbName: mongo_name,
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 10000,
-      });
-      console.log("✅ MongoDB connected");
-    } catch (error) {
-      console.error("❌ MongoDB connection error:", error.message);
+        await mongoose.connect(mongo_url, {
+            dbName: mongo_name,
+        });
+        console.log("MongoDB connected");
     }
-  };
-  
+    catch (error) {
+        console.error("MongoDB connection error:", error);
+    }
+}
 connectDB()
 
 const app = express()

@@ -41,7 +41,10 @@ const connectDB = async () => {
 }
 
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: 'https://shopsphere-fullstack.onrender.com',
+    credentials: true
+  }))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -55,7 +58,7 @@ app.use("/api/review", reviewRoutes)
 app.use("/api/order", orderRoutes)
 app.use("/api", addressRoutes)
 
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
     console.log(`server is running on port ${port}`)
     connectDB()
 })

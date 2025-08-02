@@ -1,12 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "api/index.js",
   "type": "module",
   "scripts": {
-    "test": "nodemon app.js",
-    "start": "node app.js",
-    "prod": "pm2 app.js"
+    "dev": "nodemon api/index.js",
+    "start": "node api/index.js"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +23,8 @@
     "mongoose": "^8.15.2",
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }

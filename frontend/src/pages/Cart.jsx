@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loading } from "../components/Loading.jsx";
 import { CartData } from "../context/cart.contex";
 import { UserData } from "../context/user.contex.jsx";
@@ -13,8 +13,36 @@ const Cart = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddAddressModal, setShowAddAddressModal] = useState(false);
-  const [newAddress, setNewAddress] = useState({ street: '', city: '', country: '', postalCode: '' });
-  const [userAddresses, setUserAddresses] = useState(user?.address || []);
+  const [newAddress, setNewAddress] = useState({ 
+    name: '', 
+    phone: '', 
+    street: '', 
+    city: '', 
+    state: '', 
+    pincode: '', 
+    isDefault: false 
+  });
+  const [userAddresses, setUserAddresses] = useState([]);
+  const [addressLoading, setAddressLoading] = useState(false);
+
+  // Fetch addresses from database
+  useEffect(() => {
+    if (user) {
+      fetchAddresses();
+    }
+  }, [user]);
+
+  const fetchAddresses = async () => {
+    setAddressLoading(true);
+    try {
+      const response = await axios.get('/api/user/addresses');
+      setUserAddresses(response.data.addresses || []);
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
+      toast.error('Failed to load addresses');
+    }
+    setAddressLoading(false);
+  };
 
   if (loading) return <Loading />;
   if (!carts || !carts.items) return <p>No items in the cart</p>;
@@ -34,7 +62,15 @@ const Cart = () => {
 
   const handleAddAddressClick = () => {
     setShowAddAddressModal(true);
-    setNewAddress({ street: '', city: '', country: '', postalCode: '' });
+    setNewAddress({ 
+      name: '', 
+      phone: '', 
+      street: '', 
+      city: '', 
+      state: '', 
+      pincode: '', 
+      isDefault: false 
+    });
   };
 
   const handleNewAddressChange = (e) => {
@@ -44,8 +80,8 @@ const Cart = () => {
   const handleSaveNewAddress = async () => {
     try {
       // Persist address to backend
-      await axios.post('/api/user/address', newAddress);
-      await fetchUser(); // Refresh user data
+      await axios.post('/api/user/addresses', newAddress);
+      await fetchAddresses(); // Refresh addresses
       setShowAddAddressModal(false);
       setShowAddressModal(true);
       toast.success('Address added!');
@@ -155,26 +191,30 @@ const Cart = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Select Shipping Address</h3>
-            {user?.address?.length > 0 && (
+            {userAddresses.length > 0 && (
               <div className="address-list">
-                {user.address.map((addr, idx) => (
+                {userAddresses.map((addr, idx) => (
                   <div
-                    key={idx}
+                    key={addr._id || idx}
                     className={`address-item${selectedAddress === idx ? ' selected' : ''}`}
                     onClick={() => handleSelectAddress(idx)}
                   >
-                    <div>{addr.street}, {addr.city}, {addr.country} - {addr.postalCode}</div>
+                    <div>
+                      <strong>{addr.name}</strong> - {addr.phone}<br/>
+                      {addr.street}, {addr.city}, {addr.state} - {addr.pincode}
+                      {addr.isDefault && <span style={{color: '#28a745', marginLeft: '8px'}}>(Default)</span>}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
             <button className="add-address-btn" onClick={handleAddAddressClick}>Add Address</button>
-            {(!user?.address || user.address.length === 0) && (
+            {userAddresses.length === 0 && (
               <div className="no-address">No address found. Please add a new address.</div>
             )}
             <div className="modal-actions">
               <button className="modal-cancel-btn" onClick={() => setShowAddressModal(false)}>Cancel</button>
-              {user?.address?.length > 0 && (
+              {userAddresses.length > 0 && (
                 <button className="modal-confirm-btn" onClick={handleConfirmAddress} disabled={selectedAddress === null}>Confirm</button>
               )}
             </div>
@@ -188,10 +228,21 @@ const Cart = () => {
           <div className="modal-content">
             <h3>Add New Address</h3>
             <div className="new-address-form">
-              <input name="street" placeholder="Street" value={newAddress.street} onChange={handleNewAddressChange} />
-              <input name="city" placeholder="City" value={newAddress.city} onChange={handleNewAddressChange} />
-              <input name="country" placeholder="Country" value={newAddress.country} onChange={handleNewAddressChange} />
-              <input name="postalCode" placeholder="Postal Code" value={newAddress.postalCode} onChange={handleNewAddressChange} type="number" min="100000" max="999999" />
+              <input name="name" placeholder="Full Name" value={newAddress.name} onChange={handleNewAddressChange} required />
+              <input name="phone" placeholder="Phone Number" value={newAddress.phone} onChange={handleNewAddressChange} required />
+              <input name="street" placeholder="Street Address" value={newAddress.street} onChange={handleNewAddressChange} required />
+              <input name="city" placeholder="City" value={newAddress.city} onChange={handleNewAddressChange} required />
+              <input name="state" placeholder="State" value={newAddress.state} onChange={handleNewAddressChange} required />
+              <input name="pincode" placeholder="Pincode" value={newAddress.pincode} onChange={handleNewAddressChange} required />
+              <label style={{display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px'}}>
+                <input 
+                  type="checkbox" 
+                  name="isDefault" 
+                  checked={newAddress.isDefault} 
+                  onChange={(e) => setNewAddress({...newAddress, isDefault: e.target.checked})} 
+                />
+                Set as default address
+              </label>
               <button className="save-address-btn" onClick={handleSaveNewAddress}>Save Address</button>
             </div>
             <div className="modal-actions">

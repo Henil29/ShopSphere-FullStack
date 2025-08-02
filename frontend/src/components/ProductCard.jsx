@@ -46,9 +46,7 @@ const ProductCard = ({ value }) => {
     return Math.round(discount);
   };
 
-  // For demo, use a static rating. Replace with value.rating if available.
-  const rating = value.rating || 4.3;
-  const ratingCount = value.ratingCount || 120;
+
 
   // Category tags
   const categories = Array.isArray(value.category) ? value.category : value.category ? [value.category] : [];
@@ -69,13 +67,7 @@ const ProductCard = ({ value }) => {
           ))}
         </div>
       )}
-      <div className="amazon-product-card-rating">
-        {[...Array(5)].map((_, i) => (
-          <FaStar key={i} color={i < Math.round(rating) ? '#FFD700' : '#ddd'} size={16} />
-        ))}
-        <span className="amazon-product-card-rating-value">{rating.toFixed(1)}</span>
-        <span className="amazon-product-card-rating-count">({ratingCount})</span>
-      </div>
+
       <div className="amazon-product-card-price-row">
         {value.oldprice && (
           <span className="amazon-old-price">₹{value.oldprice}</span>

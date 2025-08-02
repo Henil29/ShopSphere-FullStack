@@ -58,8 +58,6 @@ const Filter = () => {
       sorted.sort((a, b) => Number(a.newprice) - Number(b.newprice));
     } else if (sortValue === 'priceHighLow') {
       sorted.sort((a, b) => Number(b.newprice) - Number(a.newprice));
-    } else if (sortValue === 'rating') {
-      sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     } else if (sortValue === 'latest') {
       sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     }
@@ -88,7 +86,6 @@ const Filter = () => {
           <option value="latest">Latest</option>
           <option value="priceLowHigh">Price: Low to High</option>
           <option value="priceHighLow">Price: High to Low</option>
-          <option value="rating">Rating</option>
         </select>
       </div>
       <div className="amazon-filter-section">

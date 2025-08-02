@@ -15,6 +15,8 @@ const Home = () => {
     setVisibleCount(PRODUCTS_PER_PAGE);
   }, [filteredProducts]);
 
+
+
   useEffect(() => {
     const handleScroll = () => {
       const grid = document.getElementById('amazon-product-main-grid');

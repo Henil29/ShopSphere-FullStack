@@ -1,4 +1,5 @@
 import { Product } from '../models/product.model.js'
+import { Review } from '../models/review.model.js'
 import tryCatch from '../utils/tryCatch.js';
 import jwt from 'jsonwebtoken';
 import getDataUrl from '../utils/uriGenerator.js';
@@ -144,14 +145,51 @@ export const GetProduct = tryCatch(async (req, res) => {
             message: "Product not found"
         });
     }
+    
+    // Get reviews for this product to calculate rating
+    const reviews = await Review.find({ productId: id });
+    
+    const ratingCount = reviews.length;
+    const averageRating = ratingCount > 0 
+        ? (reviews.reduce((sum, review) => sum + review.rating, 0) / ratingCount).toFixed(1)
+        : 0;
+    
+    const productWithRating = {
+        ...product.toObject(),
+        rating: parseFloat(averageRating),
+        ratingCount
+    };
+    
     res.status(200).json({
-        product
+        product: productWithRating
     })
 })
 export const GetAllProducts = tryCatch(async (req, res) => {
     const products = await Product.find().populate('sellerId','name email');
+    
+    // Get all reviews to calculate ratings
+    const reviews = await Review.find();
+    
+    // Calculate rating for each product
+    const productsWithRatings = products.map(product => {
+        const productReviews = reviews.filter(review => 
+            review.productId.toString() === product._id.toString()
+        );
+        
+        const ratingCount = productReviews.length;
+        const averageRating = ratingCount > 0 
+            ? (productReviews.reduce((sum, review) => sum + review.rating, 0) / ratingCount).toFixed(1)
+            : 0;
+        
+        return {
+            ...product.toObject(),
+            rating: parseFloat(averageRating),
+            ratingCount
+        };
+    });
+    
     res.status(200).json({
         message: "Products fetched",
-        products
+        products: productsWithRatings
     })
 })

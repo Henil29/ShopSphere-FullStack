@@ -1,0 +1,14 @@
+{
+    "build": {
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "command": "npm install",
+      "cwd": "backend"
+    },
+    "start": {
+      "command": "node index.js",
+      "cwd": "backend"
+    }
+  }
+  

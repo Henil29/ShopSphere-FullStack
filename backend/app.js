@@ -39,7 +39,6 @@ const connectDB = async () => {
         console.error("MongoDB connection error:", error);
     }
 }
-connectDB()
 
 const app = express()
 app.use(cors())
@@ -56,4 +55,7 @@ app.use("/api/review", reviewRoutes)
 app.use("/api/order", orderRoutes)
 app.use("/api", addressRoutes)
 
-export default app
+app.listen(port, () => {
+    console.log(`server is running on port ${port}`)
+    connectDB()
+})

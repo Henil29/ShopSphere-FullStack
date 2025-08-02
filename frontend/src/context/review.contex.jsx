@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import axios from '../config/axios';
+import axios from "axios";
 
 const ReviewContext = createContext();
 

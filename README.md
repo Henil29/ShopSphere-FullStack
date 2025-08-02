@@ -56,21 +56,26 @@ cd ShopSphere
 ### 2. 🔧 Backend Setup
 
 ```bash
-cd server
+cd backend
 npm install
 ```
 
-Create a `.env` file in the `/server` folder:
+Create a `.env` file in the `/backend` folder:
 
 ```env
-MONGO_URI=your_mongodb_connection_string
+PORT=8080
 JWT_SECRET=your_jwt_secret
+MONGO_URI=your_mongodb_connection_string
+DB_NAME=amazon
+CLOUDINARY_API_KEY = your_cloudinary_key
+CLOUDINARY_API_SECRET = your_cloudinary_secret
+CLOUDINARY_CLOUD_NAME = your_cloudinary_name
 ```
 
 Start the backend:
 
 ```bash
-npm start
+node app.js
 ```
 
 ---
@@ -78,9 +83,9 @@ npm start
 ### 3. 💻 Frontend Setup
 
 ```bash
-cd ../client
+cd ../frontend
 npm install
-npm start
+npm run dev
 ```
 
 ---
@@ -93,14 +98,6 @@ npm start
 - 🌙 Dark mode  
 - ✉️ Email notifications (e.g., order confirmation)  
 - 📱 Responsive mobile-friendly design  
-
----
-
-## 🌐 Live Demo
-
-*It will publish soon*  
-
----
 
 ## 🤝 Contributing
 

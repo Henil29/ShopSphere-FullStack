@@ -55,6 +55,21 @@ app.use("/api/review", reviewRoutes)
 app.use("/api/order", orderRoutes)
 app.use("/api", addressRoutes)
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (process.env.NODE_ENV === "production") {
+    const frontendPath = path.join(__dirname, "frontend", "dist");
+    app.use(express.static(frontendPath));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(frontendPath, "index.html"));
+    });
+}
+
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
     connectDB()
